@@ -16,12 +16,9 @@ Import NYC transit data. Read and clean the data; retain line, station, name, st
 ```{r}
 NYC_transit_data = 
   read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
-  janitor::clean_names()%>%
+  janitor::clean_names() %>%
   select (line, station_name, station_latitude, station_longitude, route1, route2, route3, route4, route5, route6, route7, route8, route9, route10, route11, entry, vending, ada) %>%
-  
-mutate (
- recode(entry, "YES"= TRUE, "NO"= FALSE)
-  ) 
+mutate (entry = recode(entry, "YES"= TRUE, "NO"= FALSE))
 
 ```
 
@@ -41,25 +38,45 @@ There are 465 dinstinct stations.
 How many stations are ADA compliant?
 
 ```{r}
-count(NYC_transit_data, ada == TRUE)
+nrow(filter(distinct(NYC_transit_data, station_name, line, ada), ada == TRUE))
 ```
 
-There are 468 ADA compliant stations. 
+There are 84 ADA compliant stations among distinct stations. 
 
 
 What proportion of station entrances / exits without vending allow entrance?
 
 ```{r}
-nrow(
-  NYC_transit_data %>%
-filter(entry == TRUE) %>%
-filter(vending == "NO") 
-/
-nrow( NYC_transit_data %>%
-    filter(vending == "NO")
-))
-
+nrow(filter(NYC_transit_data, vending == "NO", entry == TRUE)) / nrow(filter(NYC_transit_data, vending == "NO"))
 ```
+
+The proportion is 0.377. 
+
+
+Reformat data so that route number and route name are distinct variables. 
+
+```{r}
+NYC_transit_tidy_data = gather(NYC_transit_data, key = route_number, value = route_name, route1:route11)
+NYC_transit_tidy_data
+```
+
+
+How many distinct stations serve the A train? 
+
+```{r}
+nrow(filter(distinct(NYC_transit_tidy_data, station_name, route_name, line), route_name == "A"))
+```
+
+60 distinct stations serve the A train. 
+
+Of the stations that serve the A train, how many are ADA compliant?
+
+```{r}
+nrow(filter(filter(distinct(NYC_transit_tidy_data, station_name, route_name, line, ada), route_name == "A"), ada == TRUE))
+```
+
+Only 17 stations are ADA compliant.
+
 
 
 ## Problem 2
@@ -72,13 +89,28 @@ Read and clean the Mr. Trash Wheel sheet:
 - omit rows that do not include dumpster-specific data
 - rounds the number of sports balls to the nearest integer and converts the result to an integer variable (using  as.integer)
 
+
 ```{r}
 library(readxl)
-trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx")
-res <- read.xlsx(file, 1) 
-head(trash_wheel_data, 5)
+trash_wheel_data = read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", "Mr. Trash Wheel", range = "A2:N338")  %>% 
+janitor::clean_names() %>% 
+    filter(!is.na(dumpster)) %>% 
+mutate(sports_balls = round(sports_balls)) %>% 
+  mutate(sports_balss = as.integer(sports_balls))
+```
+
+
+```{r}
+
+
+
+head(trash_wheel_data, 5) 
+ 
 
 ```
 
+
+
+## Problem 3
 
 
