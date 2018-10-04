@@ -1,0 +1,76 @@
+---
+title: "Homework 2"
+author: "Jeanette Shekelle"
+date: "9/30/2018"
+output: github_document
+---
+```{r}
+library(tidyverse)
+```
+
+## Problem 1
+
+
+Import NYC transit data. Read and clean the data; retain line, station, name, station latitude / longitude, routes served, entry, vending, entrance type, and ADA compliance. Convert the entry variable from character (YES vs NO) to a logical variable
+
+```{r}
+NYC_transit_data = 
+  read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
+  janitor::clean_names()%>%
+  select (line, station_name, station_latitude, station_longitude, route1, route2, route3, route4, route5, route6, route7, route8, route9, route10, route11, entry, vending, ada) %>%
+  
+mutate (
+  entry = (recode entry "YES"= TRUE "NO"= FALSE)
+  ) 
+
+```
+
+
+Write a short paragraph about this dataset – explain briefly what variables the dataset contains, describe your data cleaning steps so far, and give the dimension (rows x columns) of the resulting dataset. Are these data tidy?
+
+The dataset contains 18 variables
+
+How many distinct stations are there? Note that stations are identified both by name and by line (e.g. 125th St A/B/C/D; 125st 1; 125st 4/5);
+```{r}
+nrow(distinct(NYC_transit_data, station_name, line))
+```
+
+
+How many stations are ADA compliant?
+```{r}
+nrow(NYC_transit_data(ADA == ))
+```
+
+
+What proportion of station entrances / exits without vending allow entrance?
+
+```{r}
+nrow(
+  NYC_transit_data %>%
+filter(entry == TRUE) %>%
+filter(vending == "NO") 
+/
+nrow( NYC_transit_data %>%
+    filter(vending == "NO")
+))
+
+```
+
+
+## Problem 2
+
+
+Read and clean the Mr. Trash Wheel sheet:
+
+- specify the sheet in the Excel file and to omit columns containing notes (using the range argument and cell_cols() function)
+- use reasonable variable names
+- omit rows that do not include dumpster-specific data
+- rounds the number of sports balls to the nearest integer and converts the result to an integer variable (using  as.integer)
+
+```{r}
+library(readxl)
+trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2017-3.xlsx")
+head(trash_wheel_data, 5) %>% 
+
+```
+
