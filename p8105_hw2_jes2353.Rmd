@@ -25,7 +25,8 @@ mutate (entry = recode(entry, "YES"= TRUE, "NO"= FALSE))
 
 Write a short paragraph about this dataset – explain briefly what variables the dataset contains, describe your data cleaning steps so far, and give the dimension (rows x columns) of the resulting dataset. Are these data tidy?
 
-The dataset contains 19 variables
+The dataset contains `r ncol(NYC_transit_data)` variables: line, station name, station latitude, station longitude, route 1-11, entry, vending and ADA. So far, I imported the data, cleaned the names so they all have the same format (lowercase snake), selected which variables to keep, and converted the entry variable to a logical variable (true/false). The data has `r nrow(NYC_transit_data)` rows and `r ncol(NYC_transit_data)` columns. These data are tidy: the rows are observations, the columns are variables, and every value has a cell. 
+
 
 How many distinct stations are there? Note that stations are identified both by name and by line (e.g. 125th St A/B/C/D; 125st 1; 125st 4/5);
 ```{r}
@@ -33,6 +34,7 @@ nrow(distinct(NYC_transit_data, station_name, line))
 ```
 
 There are 465 dinstinct stations. 
+
 
 
 How many stations are ADA compliant?
@@ -44,13 +46,15 @@ nrow(filter(distinct(NYC_transit_data, station_name, line, ada), ada == TRUE))
 There are 84 ADA compliant stations among distinct stations. 
 
 
+
 What proportion of station entrances / exits without vending allow entrance?
 
 ```{r}
 nrow(filter(NYC_transit_data, vending == "NO", entry == TRUE)) / nrow(filter(NYC_transit_data, vending == "NO"))
 ```
 
-The proportion is 0.377. 
+The proportion of station entrances / exits without vending but that allow entrance is 0.377. 
+
 
 
 Reformat data so that route number and route name are distinct variables. 
@@ -61,6 +65,7 @@ NYC_transit_tidy_data
 ```
 
 
+
 How many distinct stations serve the A train? 
 
 ```{r}
@@ -69,13 +74,16 @@ nrow(filter(distinct(NYC_transit_tidy_data, station_name, route_name, line), rou
 
 60 distinct stations serve the A train. 
 
+
+
 Of the stations that serve the A train, how many are ADA compliant?
 
 ```{r}
 nrow(filter(filter(distinct(NYC_transit_tidy_data, station_name, route_name, line, ada), route_name == "A"), ada == TRUE))
 ```
 
-Only 17 stations are ADA compliant.
+Only 17 stations are ADA compliant of the stations that serve the A train.
+
 
 
 
@@ -116,6 +124,8 @@ precip_16_17= bind_rows(mutate(precip_16, month = month.name), mutate(precip_17,
 ```
 
 The number of observations in the trash wheel dataset is `r nrow(trash_wheel_data)`. The number of variables is `r ncol(trash_wheel_data)`. In 2017, the total precipitation was `r sum(filter(precip_16_17, year == 2017)$total)`. In 2016, the total precipitation was `r sum(filter(precip_16_17, year == 2016)$total)`. The median number of sports balls in a dumpster in 2016 was `r median(filter(trash_wheel_data, year == 2016)$sports_balls)`. 
+
+
 
 ## Problem 3
 
