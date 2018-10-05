@@ -1,7 +1,7 @@
 ---
 title: "Homework 2"
 author: "Jeanette Shekelle"
-date: "9/30/2018"
+date: "10/5/2018"
 output: github_document
 ---
 ```{r}
@@ -155,15 +155,41 @@ brfss_smart2010 =
 
 
 How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
+
+There are `r length(unique(brfss_smart2010$locationdesc))` unique locations included in the dataset. Every state is represented; there are `r length(unique(brfss_smart2010$locationabbr))` unique values in the state abbreviation column. The state of `r tail(names(sort(table(brfss_smart2010$locationabbr))), 1)` is observed the most. 
+
+
 - In 2002, what is the median of the “Excellent” response value?
+
+```{r}
+brfss_smart2010 %>% 
+  filter(year == 2002) %>% 
+  summarize(median(excellent, na.rm = TRUE))
+```
+
+The median of the excellent response values is 23.6. 
+
 - Make a histogram of “Excellent” response values in the year 2002.
+
+```{r}
+brfss_smart2010 %>% 
+  filter(year == 2002) %>% 
+ggplot(aes(x = excellent)) + 
+  geom_histogram(binwidth = 0.6, fill = "Pink") +
+  labs(title = "Excellent Response Values in 2002", x = "Excellent Response", y = "Frequency", caption = "Data: BRFSS Smart 2012") +
+  theme_gray()
+```
+
+
 - Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
 
 ```{r}
-length(unique(brfss_smart2010$locationdesc))
-length(unique(brfss_smart2010$locationabbr))
-tail(names(sort(table(Forbes2000$category))), 1)
+brfss_smart2010 %>% 
+  filter(locationdesc == "NY - New York County" | locationdesc == "NY - Queens County") %>% 
+  ggplot(aes(x = year, y = excellent)) +
+geom_point(aes(color = locationdesc), alpha = .5) +
+labs(title = "Excellent Response Values in 2002: New York County and Queens County", x = "Year", y = "Proportion with Excellent Response", caption = "Data: BRFSS Smart 2012") +
+  theme_bw()
 
 ```
 
-There are 404 unique locations included in the dataset. Every state is represented; there are 51 unique values in the state abbreviation column. 
