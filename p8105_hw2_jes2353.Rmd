@@ -160,6 +160,10 @@ How many unique locations are included in the dataset? Is every state represente
 - Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
 
 ```{r}
+length(unique(brfss_smart2010$locationdesc))
+length(unique(brfss_smart2010$locationabbr))
+tail(names(sort(table(Forbes2000$category))), 1)
 
 ```
 
+There are 404 unique locations included in the dataset. Every state is represented; there are 51 unique values in the state abbreviation column. 
